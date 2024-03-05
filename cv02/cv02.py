@@ -1,60 +1,50 @@
 import cv2
 import numpy as np
 
-"""
-video_path = "cv02_hrnecek.mp4"
-vzor = cv2.imread('cv02_vzor_hrnecek.bmp')
-vzor = cv2.cvtColor(vzor, cv2.COLOR_BGR2HSV)
-vzor_hist = cv2.calcHist([vzor],[0],None,[256],[0,256])
-vzor_hist_norm =  cv2.normalize(vzor_hist, vzor_hist, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
-sizex = vzor.shape[0]
-sizey = vzor.shape[1]
+def calculate_center(back_projection):
+    x, y = np.meshgrid(np.arange(back_projection.shape[1]), np.arange(back_projection.shape[0]))
+    new_center_X = np.sum(x * back_projection) / np.sum(back_projection)
+    new_center_Y = np.sum(y * back_projection) / np.sum(back_projection)
+    return new_center_X, new_center_Y
 
-#test
-vidcap = cv2.VideoCapture(video_path)
-success,image = vidcap.read()
-hsv_image = cv2.cvtColor( image,cv2.COLOR_RGB2HSV)
-backproj = cv2.calcBackProject([hsv_image], [0], vzor_hist, [0,180], scale=1)
-cv2.imshow('BackProj', backproj)
-cv2.waitKey(0)
+if __name__ == "__main__":
+    video_path = "cv02_hrnecek.mp4"
+    vzor = cv2.imread('cv02_vzor_hrnecek.bmp')
+    vzor = cv2.cvtColor(vzor, cv2.COLOR_BGR2HSV)
+    sizey = vzor.shape[0] / 2
+    sizex = vzor.shape[1] / 2
+    vzor = vzor[:, :, 0]
+    vzor_hist = cv2.calcHist([vzor],[0],None,[180],[0,180]).flatten()
+    vzor_hist = vzor_hist/max(vzor_hist)
+    vzor_hist = vzor_hist / np.max(vzor_hist)
 
-"""
-def Hist_and_Backproj(val):
-    bins = val
-    histSize = max(bins, 2)
-    ranges = [0, 180]  # hue_range
+    center_X = None
+    center_Y = None
+    #nahrání videa
+    vidcap = cv2.VideoCapture(video_path)
+    while True:
+        ok, frame = vidcap.read()
+        if not ok:
+            break;
+        hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        hue = hsv_frame[:, :, 0]
+        back_projection = vzor_hist[hue]
+        if center_X is None:
+            #first frame
+            center_X, center_Y = calculate_center(back_projection)
+        else:
+            back_projection = back_projection[corner_y1:corner_y2, corner_x1:corner_x2]
+            new_center_X, new_center_Y = calculate_center(back_projection)
+            center_X = int(corner_x1 + new_center_X)
+            center_Y = int(corner_y1 + new_center_Y)
 
-    hist = cv2.calcHist([hue], [0], None, [histSize], ranges, accumulate=False)
-    cv2.normalize(hist, hist, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
+        corner_x1 = abs(int(center_X - sizex))
+        corner_y1 = abs(int(center_Y - sizey))
+        corner_x2 = abs(int(center_X + sizex))
+        corner_y2 = abs(int(center_Y + sizey))
+        cv2.rectangle(frame, (corner_x1, corner_y1), (corner_x2, corner_y2), (0, 255, 0), 3)
+        cv2.imshow('frame', frame)
+        cv2.waitKey()
 
-    backproj = cv2.calcBackProject([hue], [0], hist, ranges, scale=1)
 
-    cv2.imshow('BackProj', backproj)
-
-    w = 400
-    h = 400
-    bin_w = int(round(w / histSize))
-    histImg = np.zeros((h, w, 3), dtype=np.uint8)
-    for i in range(bins):
-        cv2.rectangle(histImg, (i * bin_w, h), ((i + 1) * bin_w, h - int(np.round(hist[i] * h / 255.0))), (0, 0, 255),
-                     cv2.FILLED)
-    cv2.imshow('Histogram', histImg)
-
-vidcap = cv2.VideoCapture("cv02_hrnecek.mp4")
-success,image = vidcap.read()
-src = image
-if src is None:
-    print('Could not open or find the image:')
-    exit(0)
-hsv = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
-ch = (0, 0)
-hue = np.empty(hsv.shape, hsv.dtype)
-cv2.mixChannels([hsv], [hue], ch)
-window_image = 'Source image'
-cv2.namedWindow(window_image)
-bins = 25
-cv2.createTrackbar('* Hue  bins: ', window_image, bins, 180, Hist_and_Backproj)
-Hist_and_Backproj(bins)
-cv2.imshow(window_image, src)
-cv2.waitKey()
 
