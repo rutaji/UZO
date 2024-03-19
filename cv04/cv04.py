@@ -38,19 +38,64 @@ def Ekvializace_histogramu(input):
     equalized_image = np.interp(image.flatten(), bins[:-1], sum_norm * 255).reshape(image.shape)
     return equalized_image.astype(np.uint8)
 
+def Get_DFT(image_path):
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    fft2 = np.abs(np.fft.fft2(image))
+    shifted_fft2 = np.fft.fftshift(fft2)
+
+    # Vykreslení amplitudového spektra
+    plt.subplot(1, 2, 1)
+    plt.imshow(np.log(fft2), cmap='jet')
+    plt.colorbar()
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(np.log(shifted_fft2), cmap='jet')
+    plt.colorbar()
+
+    plt.show()
+
+def Filter(picture_path, filter_path):
+    image = cv2.imread(picture_path,cv2.IMREAD_GRAYSCALE) / 255
+    filter = cv2.imread(filter_path,cv2.IMREAD_GRAYSCALE) / 255
+    result = cv2.filter2D(image,-1,filter)
+    spectrum = np.log(np.abs(np.fft.fftshift(np.fft.fft2(result))))
+    plt.subplot(2,2,1)
+    plt.imshow(image, cmap='gray')
+    plt.subplot(2, 2, 2)
+    plt.imshow(result, cmap='gray')
+    plt.subplot(2, 2, 3)
+    plt.imshow(filter, cmap='gray')
+    plt.subplot(2, 2, 4)
+    plt.imshow(spectrum, cmap='jet')
+    plt.show()
+
 
 if __name__ == "__main__":
-    #region correction
-    etanol1="cv04_e01.bmp"
-    file1="cv04_f01.bmp"
+
+    # region correction
+    etanol1 = "cv04_e01.bmp"
+    file1 = "cv04_f01.bmp"
     etanol2 = "cv04_e02.bmp"
     file2 = "cv04_f02.bmp"
 
-    light_correction(file1,etanol1)
-    light_correction(file2,etanol2)
-    #endregion
-    #region ekvalizace
-    plt.imshow(Ekvializace_histogramu("cv04_rentgen.bmp"),cmap="gray")
+    light_correction(file1, etanol1)
+    light_correction(file2, etanol2)
+    # endregion
+
+    plt.imshow(Ekvializace_histogramu("cv04_rentgen.bmp"), cmap="gray")
     plt.show()
+
+    Get_DFT("cv04_rentgen.bmp")
+
+    #region filter
+    picture = "cv04c_robotC.bmp"
+    Filter(picture, "cv04c_filtDP.bmp")
+    Filter(picture, "cv04c_filtDP1.bmp")
+    Filter(picture, "cv04c_filtHP.bmp")
+    Filter(picture, "cv04c_filtHP1.bmp")
     #endregion
+
+
+
+
 
