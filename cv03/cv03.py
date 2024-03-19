@@ -16,8 +16,8 @@ def Rotate(picture,angle):
     minY = min(cornersY)
     for x in range(0,picture_X+1):
         for y in range(0,picture_Y+1):
-            newX = int(x * cosA + y * sinA)
-            newY = int( -x * sinA + y * cosA)
+            newX = round(x * cosA + y * sinA)
+            newY = round( -x * sinA + y * cosA)
             newY += abs(minY)
             newX += abs(minX)
             result[newY,newX,0] = picture[y,x,0]
@@ -29,6 +29,6 @@ def Rotate(picture,angle):
 if __name__ == "__main__":
     picture_path = "cv03_robot.bmp"
     picture = cv2.imread(picture_path)
-    result = Rotate(picture,1)
+    result = Rotate(picture,4)
     cv2.imshow("result", result)
     cv2.waitKey()
