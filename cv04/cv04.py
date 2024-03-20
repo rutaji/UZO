@@ -58,6 +58,7 @@ def Filter(picture_path, filter_path):
     image = cv2.imread(picture_path,cv2.IMREAD_GRAYSCALE) / 255
     filter = cv2.imread(filter_path,cv2.IMREAD_GRAYSCALE) / 255
     result = cv2.filter2D(image,-1,filter)
+    #todo nčíst obrázek udělat furierova transformaci a pronásobit a poté furierova transformace zpět
     spectrum = np.log(np.abs(np.fft.fftshift(np.fft.fft2(result))))
     plt.subplot(2,2,1)
     plt.imshow(image, cmap='gray')
