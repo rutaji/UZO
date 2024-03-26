@@ -55,19 +55,32 @@ def Get_DFT(image_path):
     plt.show()
 
 def Filter(picture_path, filter_path):
-    image = cv2.imread(picture_path,cv2.IMREAD_GRAYSCALE) / 255
-    filter = cv2.imread(filter_path,cv2.IMREAD_GRAYSCALE) / 255
-    result = cv2.filter2D(image,-1,filter)
+    image = cv2.imread(picture_path,cv2.IMREAD_GRAYSCALE)
+    filter = cv2.imread(filter_path,cv2.IMREAD_GRAYSCALE)
+
     #todo nčíst obrázek udělat furierova transformaci a pronásobit a poté furierova transformace zpět
-    spectrum = np.log(np.abs(np.fft.fftshift(np.fft.fft2(result))))
+    """fourier = np.fft.fft2(image)
+    for y in range(fourier.shape[0]):
+        for x in range(fourier.shape[1]):
+            fourier[y,x] = fourier[y,x] * filter[y,x]"""
+    spectrum = np.fft.fftshift(np.fft.fft2(image))
+    spectrum_plot = np.log(np.abs(spectrum))
+    multiplaed = np.multiply(spectrum,filter)
+
+    image_filtered = np.fft.fft2(np.fft.fft2(multiplaed))
+    image_filtered_plot = np.abs(image_filtered).clip(0,255).astype(np.uint8)
+
+    spectrum_to_plot = np.log(np.abs(spectrum))
+    spectrum_to_plot = np.multiply(spectrum_to_plot, filter)
+
     plt.subplot(2,2,1)
     plt.imshow(image, cmap='gray')
     plt.subplot(2, 2, 2)
-    plt.imshow(result, cmap='gray')
+    plt.imshow(image_filtered_plot, cmap='gray')
     plt.subplot(2, 2, 3)
     plt.imshow(filter, cmap='gray')
     plt.subplot(2, 2, 4)
-    plt.imshow(spectrum, cmap='jet')
+    plt.imshow(spectrum_to_plot, cmap='jet')
     plt.show()
 
 
