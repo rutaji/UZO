@@ -40,16 +40,15 @@ def Ekvializace_histogramu(input):
 
 def Get_DFT(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    fft2 = np.abs(np.fft.fft2(image))
-    shifted_fft2 = np.fft.fftshift(fft2)
+    fft2 = np.fft.fft2(image)
 
     # Vykreslení amplitudového spektra
     plt.subplot(1, 2, 1)
-    plt.imshow(np.log(fft2), cmap='jet')
+    plt.imshow(np.log(np.abs(fft2)), cmap='jet')
     plt.colorbar()
 
     plt.subplot(1, 2, 2)
-    plt.imshow(np.log(shifted_fft2), cmap='jet')
+    plt.imshow(np.log(np.abs(np.fft.fftshift(fft2))), cmap='jet')
     plt.colorbar()
 
     plt.show()
@@ -58,25 +57,19 @@ def Filter(picture_path, filter_path):
     image = cv2.imread(picture_path,cv2.IMREAD_GRAYSCALE)
     filter = cv2.imread(filter_path,cv2.IMREAD_GRAYSCALE)
 
-    #todo nčíst obrázek udělat furierova transformaci a pronásobit a poté furierova transformace zpět
-    """fourier = np.fft.fft2(image)
-    for y in range(fourier.shape[0]):
-        for x in range(fourier.shape[1]):
-            fourier[y,x] = fourier[y,x] * filter[y,x]"""
     spectrum = np.fft.fftshift(np.fft.fft2(image))
-    spectrum_plot = np.log(np.abs(spectrum))
-    multiplaed = np.multiply(spectrum,filter)
+    multiplied = np.multiply(spectrum, filter) / 255
 
-    image_filtered = np.fft.fft2(np.fft.fft2(multiplaed))
-    image_filtered_plot = np.abs(image_filtered).clip(0,255).astype(np.uint8)
+    image_filtered = np.fft.ifft2(np.fft.ifftshift(multiplied))
+    image_filtered_to_plot = np.abs(image_filtered).clip(0, 255).astype(np.uint8)
 
-    spectrum_to_plot = np.log(np.abs(spectrum))
+    spectrum_to_plot = np.log(np.abs(spectrum)) / 20
     spectrum_to_plot = np.multiply(spectrum_to_plot, filter)
 
     plt.subplot(2,2,1)
     plt.imshow(image, cmap='gray')
     plt.subplot(2, 2, 2)
-    plt.imshow(image_filtered_plot, cmap='gray')
+    plt.imshow(image_filtered_to_plot, cmap='gray')
     plt.subplot(2, 2, 3)
     plt.imshow(filter, cmap='gray')
     plt.subplot(2, 2, 4)
@@ -85,7 +78,7 @@ def Filter(picture_path, filter_path):
 
 
 if __name__ == "__main__":
-
+    """
     # region correction
     etanol1 = "cv04_e01.bmp"
     file1 = "cv04_f01.bmp"
@@ -98,8 +91,8 @@ if __name__ == "__main__":
 
     plt.imshow(Ekvializace_histogramu("cv04_rentgen.bmp"), cmap="gray")
     plt.show()
-
-    Get_DFT("cv04_rentgen.bmp")
+    """
+    Get_DFT("cv04c_robotC.bmp")
 
     #region filter
     picture = "cv04c_robotC.bmp"
