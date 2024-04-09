@@ -40,6 +40,7 @@ def ApplyMask(image,mask):
 
 def Laplaceuv(image):
     result = ApplyMask(image,np.array([[0,1,0],[1,-4,1],[0,1,0]]))
+
     display(image,result)
     
 
@@ -77,6 +78,7 @@ def sobeluv(image):
                                    [0,-1,-2]]))
     
     result = np.abs(h1) + np.abs(h2) + np.abs(h3) + np.abs(h4) + np.abs(h5) + np.abs(h6) + np.abs(h7) + np.abs(h8)
+
     display(image,result)
 
 
@@ -114,6 +116,7 @@ def kirsch(image):
                                     [3, -5, -5]]))
 
     result = np.abs(h1) + np.abs(h2) + np.abs(h3) + np.abs(h4) + np.abs(h5) + np.abs(h6) + np.abs(h7) + np.abs(h8)
+
     display(image, result)
     
 
@@ -121,7 +124,7 @@ def kirsch(image):
 
 if __name__ == "__main__":
     image_path1 = "cv06_robotC.bmp"
-    image = cv2.imread(image_path1,cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(image_path1, cv2.IMREAD_GRAYSCALE)
     Laplaceuv(image)
     sobeluv(image)
     kirsch(image)
