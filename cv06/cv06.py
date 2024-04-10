@@ -25,6 +25,15 @@ def display(image,result):
     plt.show()
 
 
+def Get_max(masks):
+    result = np.zeros(masks[0].shape, dtype=int)
+    for y in range(result.shape[0]):
+        for x in range(result.shape[1]):
+            vals = list()
+            for mask in masks:
+                vals.append(mask[y,x])
+            result[y,x] = max(vals)
+    return result
 def ApplyMask(image,mask):
     starting_point = int((len(mask)-1)/2)
     result = np.zeros(image.shape, dtype=int)
@@ -77,7 +86,7 @@ def sobeluv(image):
                                    [1,0,1],
                                    [0,-1,-2]]))
     
-    result = np.abs(h1) + np.abs(h2) + np.abs(h3) + np.abs(h4) + np.abs(h5) + np.abs(h6) + np.abs(h7) + np.abs(h8)
+    result = abs(h1) + abs(h2) + abs(h3) + abs(h4) + abs(h5) + abs(h6) + abs(h7) + abs(h8)
 
     display(image,result)
 
@@ -115,7 +124,7 @@ def kirsch(image):
                                     [3, 0, -5],
                                     [3, -5, -5]]))
 
-    result = np.abs(h1) + np.abs(h2) + np.abs(h3) + np.abs(h4) + np.abs(h5) + np.abs(h6) + np.abs(h7) + np.abs(h8)
+    result = Get_max([h1,h2,h3,h4,h5,h6,h7,h8])
 
     display(image, result)
     
