@@ -1,6 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import barvic
 
 
 def Thresholding(image,threshold):
@@ -30,17 +31,24 @@ if __name__ == "__main__":
     plt.show()
     threshold = 130
     bin_image = Thresholding(image,threshold)
-    mask = np.array([[0, 0, 0, 1, 0, 0],
-                     [0, 1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1, 1],
-                     [0, 1, 1, 1, 1, 1]],dtype=np.uint8)#todo nepoužívám
-    plt.subplot(1,2,1)
-    open_image = Open(bin_image,np.ones((7,7),dtype=np.uint8))
+    mask = np.array([[0, 0, 0, 1, 0, 0, 0],
+                     [0, 1, 1, 1, 1, 1, 1],
+                     [0, 1, 1, 1, 1, 1, 1],
+                     [0, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1],
+                     [0, 1, 1, 1, 1, 1, 1]], dtype=np.uint8)
+    open_image = Open(bin_image, mask)
+    colored_image, color_stats = barvic.main(open_image)
+
+    plt.subplot(1,3,1)
     plt.imshow(bin_image,cmap="gray")
     plt.title("bin image")
-    plt.subplot(1,2,2)
-    plt.imshow(open_image,cmap="gray")
+    plt.subplot(1, 3, 2)
+    plt.imshow(open_image, cmap="gray")
     plt.title("open image")
+    plt.subplot(1, 3, 3)
+    plt.imshow(colored_image, cmap="gray")
+    plt.title("colored image")
     plt.show()
