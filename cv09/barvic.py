@@ -44,6 +44,9 @@ def add_to_equivalent(neighbours):
 
 def compute_centroid():
     for color_stat in color_stats.values():
+        if color_stat.count == 0:
+            color_stat.xt = None
+            continue
         color_stat.xt = color_stat.x / color_stat.count
         color_stat.yt = color_stat.y / color_stat.count
 def get_color(value):
@@ -69,13 +72,16 @@ class Color_stats:
 
 #region public method
 
-def main(image):
+def main(image,background_color=0):
     # první průchod barvení
-    result = image.copy()
+    result = np.zeros(image.shape,dtype=np.uint16)
+    for y in range(0, result.shape[0]):
+        for x in range(0, result.shape[1]):
+            result[y,x] = image[y,x]
     highest_number = 2
     for y in range(0, result.shape[0]):
         for x in range(0, result.shape[1]):
-            if result[y, x] == 0:
+            if result[y, x] == background_color:
                 continue
             neighbours = get_neighbours(result, y, x)
             if len(neighbours) == 0:
@@ -103,7 +109,19 @@ def main(image):
 
 
 
-def DrawCentroid(image):
+def DrawCentroid(image,min_count = 1):
     for color_stat in color_stats.values():
-        image = cv2.circle(image, (int(color_stat.xt), int(color_stat.yt)), radius=0, color=(0, 0, 255), thickness=4)
+        if color_stat.xt is not None and color_stat.count >= min_count:
+            image = cv2.circle(image, (int(color_stat.xt), int(color_stat.yt)), radius=0, color=(0, 0, 255), thickness=4)
     return image
+
+def Get_number_of_areas_bigger_than(min_pixel):
+    result = 0
+    for color_stat in color_stats.values():
+        if color_stat.count >= min_pixel:
+            result += 1
+    return result
+
+def Reset():
+    equivalent = list()
+    Color_stats = dict()

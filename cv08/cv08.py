@@ -23,7 +23,8 @@ def Open(image,mask):
 
 if __name__ == "__main__":
     image_path1 = "cv08_im1.bmp"
-    image = cv2.imread(image_path1, cv2.IMREAD_GRAYSCALE)
+    original = cv2.imread(image_path1)
+    image = cv2.cvtColor(original, cv2.COLOR_BGR2GRAY)
     plt.subplot(1, 2, 1)
     plt.imshow(image,cmap="gray")
     plt.subplot(1, 2, 2)
@@ -42,13 +43,16 @@ if __name__ == "__main__":
     open_image = Open(bin_image, mask)
     colored_image, color_stats = barvic.main(open_image)
 
-    plt.subplot(1,3,1)
+    plt.subplot(2,2,1)
     plt.imshow(bin_image,cmap="gray")
     plt.title("bin image")
-    plt.subplot(1, 3, 2)
+    plt.subplot(2, 2, 2)
     plt.imshow(open_image, cmap="gray")
     plt.title("open image")
-    plt.subplot(1, 3, 3)
+    plt.subplot(2, 2, 3)
     plt.imshow(colored_image, cmap="gray")
     plt.title("colored image")
+    plt.subplot(2,2,4)
+    plt.title("original image with centroid")
+    plt.imshow(barvic.DrawCentroid(original))
     plt.show()
