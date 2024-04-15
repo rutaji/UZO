@@ -105,5 +105,5 @@ def main(image):
 
 def DrawCentroid(image):
     for color_stat in color_stats.values():
-        image = cv2.circle(image, (int(color_stat.xt), int(color_stat.yt)), radius=0, color=(0, 0, 255), thickness=4)
+        image = cv2.circle(image, (int(color_stat.xt), int(color_stat.yt)), radius=0, color=(0, 255,0), thickness=4)
     return image
