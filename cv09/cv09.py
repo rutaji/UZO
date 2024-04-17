@@ -28,7 +28,7 @@ if __name__ == "__main__":
                                   cv2.MORPH_TOPHAT,
                                   kernel,iterations=7)
 
-    """
+
     plt.subplot(2,2,1)
     plt.imshow(gray_image,cmap="gray")
     plt.title("original")
@@ -36,13 +36,11 @@ if __name__ == "__main__":
     plt.imshow(tophat_img, cmap="gray")
     plt.title("tophat")
     plt.subplot(2,2,3)
-    plt.title("original")
-    plt.hist(gray_image.flatten())
+    plt.hist(gray_image.flatten(),range(250))
     plt.subplot(2,2,4)
-    plt.title("tophat")
-    plt.hist(tophat_img.flatten())
+    plt.hist(tophat_img.flatten(),range(150))
     plt.show()
-    """
+
 
     original_threshold = 120
     tophat_threshold = 50
@@ -52,10 +50,10 @@ if __name__ == "__main__":
 
     plt.subplot(2, 2, 1)
     plt.imshow(threshold_image, cmap="gray")
-    plt.title("original")
+    plt.title("original thres.")
     plt.subplot(2, 2, 2)
     plt.imshow(threshold_image_tophat, cmap="gray")
-    plt.title("tophat")
+    plt.title("tophat thres.")
     plt.subplot(2, 2, 3)
     plt.hist(threshold_image.flatten())
     plt.subplot(2, 2, 4)
@@ -73,10 +71,10 @@ if __name__ == "__main__":
     centroids_tophat = barvic.DrawCentroid(original,91)
     print(f"Number of rice grains with tophat: {number_of_grains_original_tophat}")
 
-    plt.subplot(2,1,1)
+    plt.subplot(1,2,1)
     plt.imshow(centroids_original)
     plt.title("original")
-    plt.subplot(2,1,2)
+    plt.subplot(1,2,2)
     plt.title("tophat")
     plt.imshow(centroids_tophat)
     plt.show()
