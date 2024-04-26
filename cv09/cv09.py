@@ -1,7 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import barvic
+import barviccv09
 
 
 def Thresholding(image,threshold):
@@ -60,15 +60,15 @@ if __name__ == "__main__":
     plt.hist(threshold_image_tophat.flatten())
     plt.show()
 
-    barvic.main(threshold_image)
-    number_of_grains_original = barvic.Get_number_of_areas_bigger_than(91)
-    centroids_original = barvic.DrawCentroid(original,91)
+    barviccv09.main(threshold_image)
+    number_of_grains_original = barviccv09.Get_number_of_areas_bigger_than(91)
+    centroids_original = barviccv09.DrawCentroid(original,91)
     print(f"Number of rice grains without tophat: {number_of_grains_original}")
 
-    barvic.Reset()
-    barvic.main(threshold_image_tophat)
-    number_of_grains_original_tophat = barvic.Get_number_of_areas_bigger_than(91)
-    centroids_tophat = barvic.DrawCentroid(original,91)
+    barviccv09.Reset()
+    barviccv09.main(threshold_image_tophat)
+    number_of_grains_original_tophat = barviccv09.Get_number_of_areas_bigger_than(91)
+    centroids_tophat = barviccv09.DrawCentroid(original,91)
     print(f"Number of rice grains with tophat: {number_of_grains_original_tophat}")
 
     plt.subplot(1,2,1)
